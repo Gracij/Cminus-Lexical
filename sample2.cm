@@ -1,0 +1,50 @@
+/*
+  Sample program #2 (calculate sum & avg of an array)
+*/
+
+int a[10];
+
+int sumarr(int a[], int size)
+{
+  int i;
+  int total;
+  
+  i = 0; total = 0;
+  while(i < size) {
+    total = total + a[i];
+  }
+  
+  return total;
+}
+
+int avgarr(int a[], int size)
+{
+  int total;
+  int retval;
+  
+  total = sumarr(a, size);
+  retval = total / size;
+  
+  return retval;
+}
+
+void main(void)
+{
+  int i;
+  int cnt;
+  int sum;
+  int avg;
+  
+  i = 0;
+  cnt = input();
+  
+  while(i < cnt) {
+    a[i] = input();
+  }
+  
+  sum = sumarr(a, cnt);
+  avg = avgarr(a, cnt);
+  
+  output(sum);
+  output(avg);
+}
