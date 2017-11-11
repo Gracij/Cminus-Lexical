@@ -14,7 +14,7 @@
 #include "globals.h"
 #include "symtab.h"
 
-#define MAX_SCOPE 800
+#define MAX_SCOPE 1000
 
 /* SHIFT is the power of two used as multiplier
    in hash function  */
@@ -37,23 +37,39 @@ static Scope scopeStack[MAX_SCOPE];
 static int nstack = 0;
 static int scope_loc[MAX_SCOPE];
 
+/* Function scope_top
+ * returns last scope level
+ */
 Scope scope_top( void )
 { return scopeStack[nstack - 1];
 }
 
+/* Function scope_pop
+ * moves scope counter
+ * to previous scope
+ */
 void scope_pop( void )
 { --nstack;
 }
 
+/* Function add_loc claims space
+ * for current scope level
+ */
 int add_loc( void )
 { return scope_loc[nstack - 1]++;
 }
 
+/* Function scope_push
+ * adds new scope to scope list
+ */
 void scope_push( Scope scope )
 { scopeStack[nstack] = scope;
   scope_loc[nstack++] = 0;
 }
 
+/* Function scope_create
+ * initializes new scope
+ */
 Scope scope_create( char * fun_name )
 { Scope newScope;
   newScope = (Scope) malloc(sizeof(struct ScopeRec));
@@ -64,6 +80,9 @@ Scope scope_create( char * fun_name )
   return newScope;
 }
 
+/* Function st_bucket
+ * checks scope for given entry
+ */
 BucketList st_bucket( char * name )
 { int h = hash(name);
   Scope scope = scope_top();
@@ -120,6 +139,10 @@ int st_lookup( char * name )
   return -1;
 }
 
+/* Function st_lookup_top
+ * returns location of entry
+ * in current scope
+ */
 int st_lookup_top( char * name )
 { int h = hash(name);
   Scope scope = scope_top();
@@ -134,6 +157,10 @@ int st_lookup_top( char * name )
   return -1;
 }
 
+/* Function st_add_lineno
+ * creates line record for
+ * table entry
+ */
 int st_add_lineno( char * name, int lineno )
 { BucketList l = st_bucket(name);
   LineList ll = l->lines;
@@ -142,38 +169,6 @@ int st_add_lineno( char * name, int lineno )
   ll->next = (LineList) malloc(sizeof(struct LineListRec));
   ll->next->lineno = lineno;
   ll->next->next = NULL;
-}
-
-void printSymTab1(BucketList * hashTable, FILE * listing)
-{ for (int j = 0; j < SIZE; j++)
-  { if (hashTable[j] != NULL)
-    { BucketList l = hashTable[j];
-      TreeNode * node = l->treeNode;
-      while(l != NULL)
-      { LineList t = l->lines;
-        fprintf(listing,"%-14s ",l->name);
-        switch (node->type)
-        { case Void:
-            fprintf(listing,"Void\t");
-            break;
-          case Integer:
-            fprintf(listing,"Integer\t");
-            break;
-          case Array:
-            fprintf(listing,"Array\t");
-            break;
-          default:
-            break;
-        }
-        while (t != NULL)
-        { fprintf(listing,"%4d ",t->lineno);
-          t = t->next;
-        }
-        fprintf(listing,"\n");
-        l = l->next;
-      }
-    }
-  }
 }
 
 /* Procedure printSymTab prints a formatted 
@@ -188,7 +183,35 @@ void printSymTab(FILE * listing)
     fprintf(listing,"Scope Level : %d\n",scope->nestedLevel);
     fprintf(listing,"Variable Name\tType\tLine Numbers\n");
     fprintf(listing,"-------------\t----\t------------\n");
-    printSymTab1(hashTable, listing);
+    for (int j=0;j<SIZE;++j)
+    { if (hashTable[j] != NULL)
+      { BucketList l = hashTable[j];
+        TreeNode * node = l->treeNode;
+        while(l != NULL)
+        { LineList t = l->lines;
+          fprintf(listing,"%-14s ",l->name);
+          switch (node->type)
+          { case Void:
+              fprintf(listing,"Void\t");
+              break;
+            case Integer:
+              fprintf(listing,"Integer\t");
+              break;
+            case Array:
+              fprintf(listing,"Array\t");
+              break;
+            default:
+              break;
+          }
+          while (t != NULL)
+          { fprintf(listing,"%4d ",t->lineno);
+            t = t->next;
+          }
+          fprintf(listing,"\n");
+          l = l->next;
+        }
+      }
+    }
     fputc('\n',listing);
   }
 } /* printSymTab */

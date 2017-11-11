@@ -44,6 +44,9 @@ static void traverse( TreeNode * t,
   }
 }
 
+/* Procedure insertIO validates input, output functions
+ * and inserts them into the symbol table
+ */
 static void insertIO(void)
 { TreeNode * fun;
   TreeNode * param;
@@ -59,7 +62,8 @@ static void insertIO(void)
   fun->lineno = 0;
   fun->attr.name = "input";
   fun->child[0] = NULL;
-  fun->child[1] = compStmt;
+  fun->child[1] = NULL;
+  fun->child[2] = compStmt;
 
   st_insert("input",-1,add_loc(),fun);
 
@@ -77,8 +81,9 @@ static void insertIO(void)
 
   fun->lineno = 0;
   fun->attr.name = "output";
-  fun->child[0] = param;
-  fun->child[1] = compStmt;
+  fun->child[0] = NULL;
+  fun->child[1] = param;
+  fun->child[2] = compStmt;
 
   st_insert("output",-1,add_loc(),fun);
 }
@@ -183,6 +188,9 @@ static void insertNode( TreeNode * t)
   }
 }
 
+/* Function afterInsertNode adjusts
+ * scope for compound statements
+ */
 static void afterInsertNode(TreeNode * t)
 { switch (t->nodekind)
   { case StmtK:
@@ -214,6 +222,9 @@ void buildSymtab(TreeNode * syntaxTree)
   }
 }
 
+/* Function beforeCheckNode adjusts
+ * scope and function for current node
+ */
 static void beforeCheckNode(TreeNode * t)
 { switch (t->nodekind)
   { case DeclK:
