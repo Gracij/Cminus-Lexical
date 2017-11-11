@@ -72,7 +72,7 @@ static void insertIO(void)
 
   param = newDeclNode(ParamK);
   param->attr.name = "arg";
-  param->child[0] = newExpNode(IdK);
+  param->child[0] = newDeclNode(FunK);
   param->child[0]->type = Integer;
 
   compStmt = newStmtNode(CompK);
@@ -163,7 +163,6 @@ static void insertNode( TreeNode * t)
               break;
             }
             name = t->attr.name;
-            t->type = Integer;
             if (st_lookup_top(name) < 0)
               st_insert(name,t->lineno,add_loc(),t);
             else
@@ -287,6 +286,10 @@ static void checkNode(TreeNode * t)
             type1 = t->child[0]->type;
             type2 = t->child[1]->type;
             op = t->attr.op;
+            if (op == ASSIGN && type1 == Array)
+              typeError(t,"assignment of array to variable");
+            else if (op == ASSIGN && type2 == Void)
+              typeError(t,"assignment of void value");
             if (type1 == Void || type2 == Void)
               typeError(t,"operands must not have void type");
             else if (type1 == Array && type2 == Array)

@@ -189,7 +189,7 @@ void printSymTab(FILE * listing)
         TreeNode * node = l->treeNode;
         while(l != NULL)
         { LineList t = l->lines;
-          fprintf(listing,"%-14s ",l->name);
+          fprintf(listing,"%-14s\t",l->name);
           switch (node->type)
           { case Void:
               fprintf(listing,"Void\t");
@@ -201,6 +201,7 @@ void printSymTab(FILE * listing)
               fprintf(listing,"Array\t");
               break;
             default:
+              fprintf(listing,"\t");
               break;
           }
           while (t != NULL)
