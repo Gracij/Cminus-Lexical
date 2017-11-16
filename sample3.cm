@@ -1,0 +1,11 @@
+/* Array program in C-Minus
+ */
+
+int main( void )
+{ 
+  int x[3];
+  x[0] = 1;
+  x[1] = 2;
+  x[2] = 3;
+  return x[2];
+}

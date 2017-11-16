@@ -1,0 +1,14 @@
+/* Erroneous program in C-Minus
+ */
+void last( void l[], void size )
+{
+  int l = l[size - 1];
+  return l;
+}
+
+int main( void )
+{ 
+  int l[] = { 2, 4, 8, 16 };
+  int size = 4;
+  return last(l, size);
+}
