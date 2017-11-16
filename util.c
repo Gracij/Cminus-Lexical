@@ -77,7 +77,6 @@ TreeNode * newStmtNode(StmtKind kind)
     t->nodekind = StmtK;
     t->kind.stmt = kind;
     t->lineno = lineno;
-    t->type = Void;
   }
   return t;
 }
@@ -115,7 +114,6 @@ TreeNode * newDeclNode(DeclKind kind)
     t->nodekind = DeclK;
     t->kind.decl = kind;
     t->lineno = lineno;
-    t->type = Void;
   }
   return t;
 }
@@ -174,7 +172,7 @@ void printTree( TreeNode * tree )
           fprintf(listing,"Return\n");
           break;
         default:
-          fprintf(listing,"Unknown ExpNode kind\n");
+          fprintf(listing,"Unknown StmtNode kind\n");
           break;
       }
     }

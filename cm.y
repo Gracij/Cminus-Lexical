@@ -68,14 +68,14 @@ saveNumber  : NUM
             ;
 var_decl    : INT saveName SEMI
                  { $$ = newDeclNode(VarK);
-                   $$->child[0] = $1;
+                   /* $$->child[0] = $1; */
                    $$->lineno = lineno;
                    $$->type = Integer;
                    $$->attr.name = savedName;
                  }
             | INT saveName LBPARENT saveNumber RBPARENT SEMI
                  { $$ = newDeclNode(VarK);
-                   $$->child[0] = $1;
+                   /* $$->child[0] = $1; */
                    $$->lineno = lineno;
 		   $$->type = Array;
                    $$->attr.name = savedName;
@@ -90,9 +90,9 @@ fun_decl    : INT saveName {
               LPARENT params RPARENT comp_stmt
                  {
                    $$ = $3;
-                   $$->child[0] = $1;
-                   $$->child[1] = $5;
-                   $$->child[2] = $7;
+                   /* $$->child[0] = $1; */
+                   $$->child[0] = $5;
+                   $$->child[1] = $7;
                  }
             | VOID saveName {
                    $$ = newDeclNode(FunK);
@@ -103,9 +103,9 @@ fun_decl    : INT saveName {
               LPARENT params RPARENT comp_stmt
                  {
                    $$ = $3;
-                   $$->child[0] = $1;
-                   $$->child[1] = $5;
-                   $$->child[2] = $7;
+                   /* $$->child[0] = $1; */
+                   $$->child[0] = $5;
+                   $$->child[1] = $7;
                  }
             ;
 param_decl  : param_decl COMMA param
@@ -127,13 +127,13 @@ params      : param_decl  { $$ = $1; }
             ;
 param       : INT saveName
                  { $$ = newDeclNode(ParamK);
-		   $$->child[0] = $1;
+		   /* $$->child[0] = $1; */
                    $$->type = Integer;
 		   $$->attr.name = savedName;
 		 }
             | INT saveName LBPARENT RBPARENT
                  { $$ = newDeclNode(ParamK);
-                   $$->child[0] = $1;
+                   /* $$->child[0] = $1; */
 		   $$->type = Array;
                    $$->attr.name = savedName;
                  }
@@ -218,7 +218,8 @@ var         : saveName
             | saveName LBPARENT exp RBPARENT
                  { $$ = newExpNode(IdK);
                    $$->attr.name = savedName;
-                   $$->child[0] = $3;
+                   $$->child[0] = $1;
+                   $$->child[1] = $3;
                  }
             ;
 simple_exp  : add_exp ESMALLER add_exp

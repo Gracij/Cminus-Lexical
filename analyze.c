@@ -147,6 +147,7 @@ static void insertNode( TreeNode * t)
           scope_push(scope_create(fun_name));
           preserve_scope = TRUE;
           switch (t->child[0]->type)
+          /* pass inherited attributes */
           { case Integer:
               t->type = Integer;
               break;
@@ -212,7 +213,7 @@ static void afterInsertNode(TreeNode * t)
 void buildSymtab(TreeNode * syntaxTree)
 { globalScope = scope_create(NULL);
   scope_push(globalScope);
-  insertIO();
+  /* insertIO(); */
   traverse(syntaxTree,insertNode,afterInsertNode);
   scope_pop();
   if (TraceAnalyze)
@@ -261,13 +262,14 @@ static void checkNode(TreeNode * t)
           break;
         case IterK:
           if (t->child[0]->type == Void)
+            /* check for valid condition */
             typeError(t->child[0],"while test should not have void value");
           break;
         case RetK:
           { TreeNode * funDecl = st_bucket(fun_name)->treeNode;
             TypeSpec funType = funDecl->type;
             TreeNode * expr = t->child[0];
-
+            /* return value must match type of function */
             if (funType == Void && (expr != NULL && expr->type != Void))
               typeError(t,"unexpected return value");
             else if (funType == Integer && (expr == NULL || expr->type == Void))
@@ -286,6 +288,7 @@ static void checkNode(TreeNode * t)
             type1 = t->child[0]->type;
             type2 = t->child[1]->type;
             op = t->attr.op;
+            /* check operand type agreement */
             if (op == ASSIGN && type1 == Array)
               typeError(t,"assignment of array to variable");
             else if (op == ASSIGN && type2 == Void)
@@ -337,6 +340,7 @@ static void checkNode(TreeNode * t)
             { typeError(t,"expected function");
               break;
             }
+            /* check function type and params */
             while (arg != NULL)
             { if (param != NULL)
                 typeError(arg,"wrong number of parameters");
